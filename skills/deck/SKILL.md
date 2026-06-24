@@ -1,0 +1,193 @@
+---
+name: deck
+description: >-
+  Build a premium PRESENTED slide deck — classic one-slide-at-a-time slides you
+  advance with a clicker — as a Vite + React app. It keeps the Slidev navigation UI
+  (floating glass dock + thumbnail rail + click-builds + presenter) but slides are
+  RESPONSIVE React (reflow to any screen, no fixed canvas) and fully interactive.
+  Use this for a deck you'll PRESENT (talk over, projector, screen-share) when you
+  want web interactivity and responsiveness without Slidev's constraints — the
+  React successor to the `slides` Slidev skill. (For a deck shared as a LINK and
+  scrolled, use `webdeck`.) Scaffolds by COPYING the bundled app in assets/
+  verbatim, then AUTHORS an original deck from the user's real topic/brand.
+---
+
+# Deck — a premium, responsive, React presentation engine for Bolt
+
+Classic **paged** slides (advance one at a time, present over them) — but rebuilt in
+**Vite + React** so each slide is a **responsive web layout** instead of a fixed
+1080×607 canvas that clips. It keeps the Slidev UI you liked (the floating dock +
+thumbnail rail + click-builds + presenter) and adds real web interactivity.
+
+Two halves — keep them separate:
+
+- **The engine + UI are pre-built** — `assets/` is a complete app: the paged engine,
+  the dock/rail chrome, the section components, the shared CSS. **Copy it verbatim.
+  Never regenerate it.** This is the part you liked; it must look/behave identically.
+- **The content is authored fresh, every time** — the slides (topic, structure, copy,
+  visuals, theme) are designed from scratch for *this* request.
+
+> **Shared theme.** `src/styles/tokens.css` is the *same* `:root` token vocabulary as
+> the `slides` (Slidev) and `webdeck` skills. A brand themed once looks identical
+> everywhere.
+
+## ⛔ Two hard rules
+
+1. **Copy `assets/` byte-for-byte** — everything in `src/deck/` (the engine + chrome:
+   `Deck`, `Slide`, `Build`, `Reveal`, `DeckContext`, `icons`), the components, and
+   both CSS files. Don't retype or paraphrase the engine or the chrome.
+2. **Author the deck from the user's REAL input — do not reskin the starter.**
+   `src/App.tsx` is a throwaway that only proves it runs. **Delete its slides and
+   write a new deck.** Never reuse its order, copy, placeholders, or fake names.
+
+---
+
+## Step 0 — Ground the deck in the user's real input
+
+Use the user's real topic, brand, document, facts. Never fabricate a placeholder
+company, logo, or quote for a real subject. If a URL/brand is given, the theme comes
+from that brand — fetch the page for real colors/font/logo, or use the brand's known
+palette, or **STOP and ask**. Report which colors/fonts you used and where from.
+
+---
+
+## Step 1 — Scaffold (copy the bundled app)
+
+Copy `assets/` to the project root unchanged:
+
+```
+package.json  vite.config.ts  tsconfig*.json  index.html   src/main.tsx
+src/App.tsx                 ← THROWAWAY. delete its slides; author the real deck.
+src/styles/tokens.css       ← edit ONLY the :root block (Step 2)
+src/styles/base.css         ← responsive base + atmosphere + motion + chrome (don't edit)
+src/deck/   Deck Slide Build Reveal DeckContext icons   ← the engine + UI. LOCKED.
+src/components/  CountUp TiltCard Marquee Bento Split StatGrid VisualDashboard
+```
+
+`npm install && npm run dev` runs it. Verify the dock + thumbnail rail appear, arrow
+keys advance slides + reveal builds, then build the real deck.
+
+---
+
+## Step 2 — Theme it (edit only the `:root` block)
+
+All color, type, radius, depth, motion live in `src/styles/tokens.css` `:root`.
+**Change values, never variable names.** Same contract / 9-style gallery as the
+other skills (dark product, editorial luxury, Swiss, dark technical, warm minimal,
+fintech, aurora glass, cinematic, paper editorial). One accent, used sparingly.
+Dark vs light: set `html { color-scheme }` in base.css and pick `--bg`/`--fg`
+accordingly. Set fonts in `--font-head`/`--font-body` and the `@import` at the top
+of `base.css`. Derive from the brand when given.
+
+---
+
+## Step 3 — Author slides (each child of `<Deck>` is one slide)
+
+Compose slides in `App.tsx`. The building blocks:
+
+- **`<Slide>`** — one slide. `center` for cover/statement/quote/CTA; `full` for
+  edge-to-edge; `nav="Label"`; `notes="…"` (shown in the presenter overlay).
+- **`<Split>`** — text + edge-to-edge media (`flip` swaps). media = `<img>`, a color
+  panel, or `<TiltCard><VisualX/></TiltCard>`.
+- **`<Bento>`** — asymmetric tile grid; tiles take `c`/`r` spans + `variant`.
+- **`<StatGrid>`** — responsive proof cards; pass a `<CountUp>` as a stat `value`.
+- **Atoms** (CSS classes): `.display .headline .lead .subhead .kicker .figure
+  .accent-text .rule`. All fluid (`clamp()`).
+
+**Compose like the web, not like slideware** (same discipline as the other skills):
+full-bleed, asymmetric, layered; `Bento`/`Split` over a centered row of equal cards;
+oversized type with one accent word; vary the rhythm so no two adjacent slides share
+a shape; one idea per slide; open on a cover, close on a CTA.
+
+### Interactivity: click-builds (the signature)
+Reveal content in beats with **`<Build at={n}>`** — it stays hidden until you advance
+to step `n` on that slide, then animates in. Advancing (→ / space / Next) reveals the
+next build, then moves to the next slide. Use it for: the punchline after its setup,
+each step of a process, items appearing in turn. Use **`<Reveal>`** for an on-enter
+entrance (no click needed) on headlines/grids.
+
+```tsx
+<Slide center nav="The shift" notes="Pause, then reveal each point.">
+  <h2 className="headline" style={{ marginInline: 'auto' }}>Three things changed.</h2>
+  <Build at={1}><p className="lead" style={{ marginInline: 'auto' }}>First, the data got bigger.</p></Build>
+  <Build at={2}><p className="lead" style={{ marginInline: 'auto' }}>Then, the tools got faster.</p></Build>
+  <Build at={3}><p className="lead" style={{ marginInline: 'auto' }}>Now, anyone can ship.</p></Build>
+</Slide>
+```
+
+---
+
+## Step 4 — Responsive, not fixed (no clipping)
+
+Each slide is a **full-viewport responsive layout**, not a fixed canvas — it reflows
+to the screen, so nothing scales-and-clips:
+
+- **Fluid sizing.** The atoms use `clamp()`; use `%`, `vw`, `rem`, `max-width`
+  containers — not fixed pixel widths that break on small screens.
+- **One idea per slide**, sized to fill ~one screen with deliberate negative space.
+- **Check a narrow viewport** — `Bento`/`Split` stack (built in); make sure headlines
+  don't overflow and nothing needs scrolling. (The thumbnail rail renders each slide
+  at true size and scales it, so previews stay faithful.)
+- **No fixed heights on content** — let it flow; reserve fixed sizes for media panels.
+
+---
+
+## Step 5 — Visuals & imagery
+
+Visuals must fit the topic (same rules as the other skills): data/SaaS → a `.vframe`
+mock (`VisualDashboard` is an *example* — build topic-fit ones with real data);
+brand/product/editorial/real-world → **generate images** into `public/`, one
+consistent style, used as `Split` media or full-bleed slide backgrounds under a
+gradient scrim (no text in images). A `Split` or full-bleed image beats a floating card.
+
+---
+
+## Step 6 — Motion (with restraint)
+
+`Build` (click reveals), `Reveal` (on-enter entrance), `CountUp` (hero figures),
+`VisualDashboard` (draws itself in), `TiltCard` (one hero visual), `Marquee` (logo
+strip). The ambient background (drifting spotlights + grain + vignette) and the
+slide-change transition are automatic. **One or two motion ideas per slide**, never a
+circus. All honors `prefers-reduced-motion`.
+
+---
+
+## Extend the system — invent new slides, components & visuals
+
+The kit is a **floor, not a ceiling.** Author new section components and visuals for
+the topic — a `<Timeline>`, `<Comparison>`, `<Pricing>`, a device mock. Only the
+token *names* and `src/deck/` (engine + chrome) are off-limits to rewrite; **adding**
+components/visuals is encouraged. Every new piece must: use `var(--…)` tokens only
+(no raw hex), compose like a web section, be responsive (work on mobile), animate
+with `Reveal`/`Build` + honor reduced-motion, use tabular figures, and add **no new
+dependencies** (plain React + CSS + SVG — hand-build, it looks more bespoke).
+
+---
+
+## Step 7 — Structure & writing
+
+Pick an arc that fits the deck type (pitch, launch, brand, teaching, report) —
+structure follows content. Open on a cover, close on a CTA. ~8–16 slides sized to the
+material. Headlines short, declarative, specific (sentence case); body 1–3 tight
+sentences; 1–3 word kickers; one idea per slide. Use the user's real numbers; never
+invent numbers for a real brand. Zero lorem, zero placeholder names. Add `notes` for
+talking points where useful.
+
+---
+
+## Definition of done (self-check)
+
+- [ ] The engine + chrome are **identical** to the bundled `src/deck/` assets; the
+      dock + thumbnail rail appear, arrow keys advance slides AND reveal builds,
+      fullscreen / overview / presenter / draw work, the URL hash tracks the slide.
+- [ ] The deck is **authored, not reskinned** — topic, structure, copy, names are the
+      user's, with no starter leftovers (no "Title"/"Northwind").
+- [ ] If a brand/URL was given, `--primary`, fonts, and logo come from that brand.
+- [ ] Only the `:root` block was edited for the theme; editing `--primary` recolors
+      everything incl. the dock.
+- [ ] Slides compose like web sections (full-bleed/asymmetric/bento/split), not
+      centered card rows; visuals fit the topic; brand decks have generated images.
+- [ ] **Responsive:** looks right narrow + wide — sections stack, nothing clips or
+      needs scrolling. Builds reveal in the intended order.
+- [ ] Motion is restrained; reduced-motion respected.
+- [ ] `npm install && npm run dev` runs with no console errors; `npm run build` passes.
