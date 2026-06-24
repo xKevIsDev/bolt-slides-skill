@@ -2,7 +2,7 @@ import { Children, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import type { ReactElement, ReactNode } from 'react'
 import { MotionConfig } from 'framer-motion'
 import { DeckCtx } from './DeckContext'
-import { IconGrid, IconLeft, IconRight, IconPencil, IconExpand, IconShrink, IconPresent, IconClose } from './icons'
+import { IconGrid, IconLeft, IconRight, IconPencil, IconExpand, IconShrink, IconPresent, IconClose, IconAuto } from './icons'
 
 /* ── The paged presentation engine + the Slidev-style chrome (dock + rail).
    Wrap your <Slide>/<Bento>/<Split>/… in <Deck>. Each top-level child is one
@@ -10,6 +10,8 @@ import { IconGrid, IconLeft, IconRight, IconPencil, IconExpand, IconShrink, Icon
      → / ↓ / Space   next (reveals the next <Build>, then the next slide)
      ← / ↑           previous            O overview    F fullscreen
      Home / End      first / last        D draw        P presenter
+     A               auto-play (builds stagger in on load instead of on click)
+   <Deck autoplay>   starts in auto mode; <Deck stagger={0.16}> tunes the gap.
    Copy verbatim; theme only via the :root tokens. ───────────────────────── */
 
 const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
@@ -60,13 +62,14 @@ function DrawCanvas() {
   return <canvas ref={ref} className="noir-draw" />
 }
 
-export default function Deck({ children }: { children: ReactNode }) {
+export default function Deck({ children, autoplay = false, stagger = 0.16 }: { children: ReactNode; autoplay?: boolean; stagger?: number }) {
   const slides = useMemo(() => Children.toArray(children) as ReactElement[], [children])
   const total = slides.length
 
   const [slide, setSlide] = useState(0)
   const [clicks, setClicks] = useState(0)
   const [curMax, setCurMax] = useState(0)
+  const [auto, setAuto] = useState(autoplay)
   const [railOpen, setRailOpen] = useState(false)
   const [drawing, setDrawing] = useState(false)
   const [presenter, setPresenter] = useState(false)
@@ -77,19 +80,20 @@ export default function Deck({ children }: { children: ReactNode }) {
 
   const go = useCallback((i: number) => { setSlide(Math.max(0, Math.min(total - 1, i))); setClicks(0); setCurMax(0) }, [total])
   const next = useCallback(() => {
-    if (clicks < curMax) { setClicks(clicks + 1); return }
+    if (!auto && clicks < curMax) { setClicks(clicks + 1); return }
     if (slide < total - 1) { setSlide(slide + 1); setClicks(0); setCurMax(0) }
-  }, [clicks, curMax, slide, total])
+  }, [auto, clicks, curMax, slide, total])
   const prev = useCallback(() => {
-    if (clicks > 0) { setClicks(clicks - 1); return }
-    if (slide > 0) { setSlide(slide - 1); setClicks(9999); setCurMax(0) }
-  }, [clicks, slide])
+    if (!auto && clicks > 0) { setClicks(clicks - 1); return }
+    if (slide > 0) { setSlide(slide - 1); setClicks(auto ? 0 : 9999); setCurMax(0) }
+  }, [auto, clicks, slide])
 
   const toggleFs = useCallback(() => {
     if (document.fullscreenElement) document.exitFullscreen()
     else document.documentElement.requestFullscreen?.()
   }, [])
   const togglePresenter = useCallback(() => setPresenter((v) => !v), [])
+  const toggleAuto = useCallback(() => setAuto((v) => !v), [])
 
   // keyboard
   useEffect(() => {
@@ -104,12 +108,13 @@ export default function Deck({ children }: { children: ReactNode }) {
         case 'f': case 'F': toggleFs(); break
         case 'd': case 'D': setDrawing((v) => !v); break
         case 'p': case 'P': togglePresenter(); break
+        case 'a': case 'A': toggleAuto(); break
         case 'Escape': setRailOpen(false); setDrawing(false); break
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [next, prev, go, total, toggleFs, togglePresenter])
+  }, [next, prev, go, total, toggleFs, togglePresenter, toggleAuto])
 
   // URL hash sync
   useEffect(() => {
@@ -133,9 +138,9 @@ export default function Deck({ children }: { children: ReactNode }) {
     return () => clearInterval(t)
   }, [presenter])
 
-  const liveCtx = useMemo(() => ({ clicks, isStatic: false, registerMax }), [clicks, registerMax])
-  const hasPrev = slide > 0 || clicks > 0
-  const hasNext = slide < total - 1 || clicks < curMax
+  const liveCtx = useMemo(() => ({ clicks, isStatic: false, auto, stagger, registerMax }), [clicks, auto, stagger, registerMax])
+  const hasPrev = auto ? slide > 0 : (slide > 0 || clicks > 0)
+  const hasNext = auto ? slide < total - 1 : (slide < total - 1 || clicks < curMax)
   const notes = (slides[slide]?.props as { notes?: string } | undefined)?.notes
   const nextSlide = slides[slide + 1]
 
@@ -182,6 +187,7 @@ export default function Deck({ children }: { children: ReactNode }) {
             <div className="noir-counter"><span className="noir-counter-now">{slide + 1}</span><span className="noir-counter-tot">/ {total}</span></div>
             <button className="noir-icon-btn" title="Next" disabled={!hasNext} onClick={next}><IconRight /></button>
             <span className="noir-sep" />
+            <button className={'noir-icon-btn' + (auto ? ' on' : '')} title="Auto-play builds (A)" onClick={toggleAuto}><IconAuto /></button>
             <button className={'noir-icon-btn noir-optional' + (drawing ? ' on' : '')} title="Draw (D)" onClick={() => setDrawing((v) => !v)}><IconPencil /></button>
             <button className="noir-icon-btn" title="Fullscreen (F)" onClick={toggleFs}>{fs ? <IconShrink /> : <IconExpand />}</button>
             <button className={'noir-icon-btn noir-optional' + (presenter ? ' on' : '')} title="Presenter (P)" onClick={togglePresenter}><IconPresent /></button>

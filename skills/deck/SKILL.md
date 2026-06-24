@@ -106,6 +106,12 @@ next build, then moves to the next slide. Use it for: the punchline after its se
 each step of a process, items appearing in turn. Use **`<Reveal>`** for an on-enter
 entrance (no click needed) on headlines/grids.
 
+**Auto-play mode.** The same `<Build>`s can instead reveal **automatically, staggered,
+on slide load** — no clicking. Toggle it live with the dock's auto button or the `A`
+key, or start the deck in auto mode with **`<Deck autoplay>`** (tune the gap with
+`<Deck stagger={0.16}>`, seconds). Ideal for a self-running deck or mobile viewing;
+click-mode stays the default.
+
 ```tsx
 <Slide center nav="The shift" notes="Pause, then reveal each point.">
   <h2 className="headline" style={{ marginInline: 'auto' }}>Three things changed.</h2>
@@ -179,7 +185,8 @@ talking points where useful.
 
 - [ ] The engine + chrome are **identical** to the bundled `src/deck/` assets; the
       dock + thumbnail rail appear, arrow keys advance slides AND reveal builds,
-      fullscreen / overview / presenter / draw work, the URL hash tracks the slide.
+      auto-play / fullscreen / overview / presenter / draw work, the URL hash tracks
+      the slide.
 - [ ] The deck is **authored, not reskinned** — topic, structure, copy, names are the
       user's, with no starter leftovers (no "Title"/"Northwind").
 - [ ] If a brand/URL was given, `--primary`, fonts, and logo come from that brand.

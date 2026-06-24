@@ -9,3 +9,4 @@ export const IconExpand = () => (<svg {...base}><path d="M4 9V4h5M20 9V4h-5M4 15
 export const IconShrink = () => (<svg {...base}><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" /></svg>)
 export const IconPresent = () => (<svg {...base}><rect x="3" y="4" width="18" height="12" rx="1.5" /><path d="M8 20h8M12 16v4" /></svg>)
 export const IconClose = () => (<svg {...base}><path d="M6 6l12 12M18 6L6 18" /></svg>)
+export const IconAuto = () => (<svg {...base}><path d="M8 5.5v13l10-6.5z" /></svg>)

@@ -18,6 +18,8 @@ import VisualDashboard from './components/VisualDashboard'
    ══════════════════════════════════════════════════════════════════════ */
 export default function App() {
   return (
+    // Builds reveal on click by default. For a self-running deck, use <Deck autoplay>
+    // (or press A / the dock's auto button) to stagger them in on slide load.
     <Deck>
       {/* Cover */}
       <Slide center nav="Cover" notes="Welcome. Set the tone, then advance.">
