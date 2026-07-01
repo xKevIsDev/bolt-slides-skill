@@ -57,7 +57,7 @@ function IssueRow({ id, label, status, statusColor, active }: {
 
 export default function App() {
   return (
-    <Deck>
+    <Deck autoplay>
       {/* ── Cover ─────────────────────────────────────────────────────── */}
       <Slide center nav="Cover" notes="Welcome everyone. This is our all-hands — a look at where Linear is, what we've shipped, and where we're going. Hold on this slide for a beat.">
         <Reveal>
