@@ -1,18 +1,17 @@
 ---
-name: deck
+name: slides
 description: >-
   Build a premium PRESENTED slide deck — classic one-slide-at-a-time slides you
   advance with a clicker — as a Vite + React app. It keeps the Slidev navigation UI
   (floating glass dock + thumbnail rail + click-builds + presenter) but slides are
   RESPONSIVE React (reflow to any screen, no fixed canvas) and fully interactive.
   Use this for a deck you'll PRESENT (talk over, projector, screen-share) when you
-  want web interactivity and responsiveness without Slidev's constraints — the
-  React successor to the `slides` Slidev skill. (For a deck shared as a LINK and
-  scrolled, use `webdeck`.) Scaffolds by COPYING the bundled app in assets/
-  verbatim, then AUTHORS an original deck from the user's real topic/brand.
+  want web interactivity and responsiveness without Slidev's constraints. Scaffolds
+  by COPYING the bundled app in assets/ verbatim, then AUTHORS an original deck from
+  the user's real topic/brand.
 ---
 
-# Deck — a premium, responsive, React presentation engine for Bolt
+# Slides — a premium, responsive, React presentation engine for Bolt
 
 Classic **paged** slides (advance one at a time, present over them) — but rebuilt in
 **Vite + React** so each slide is a **responsive web layout** instead of a fixed
@@ -27,9 +26,8 @@ Two halves — keep them separate:
 - **The content is authored fresh, every time** — the slides (topic, structure, copy,
   visuals, theme) are designed from scratch for *this* request.
 
-> **Shared theme.** `src/styles/tokens.css` is the *same* `:root` token vocabulary as
-> the `slides` (Slidev) and `webdeck` skills. A brand themed once looks identical
-> everywhere.
+> **Theme surface.** All color, type, radius, depth, and motion live in the `:root`
+> token vocabulary of `src/styles/tokens.css`. Theme a brand once, there.
 
 ## ⛔ Two hard rules
 
@@ -58,24 +56,23 @@ Copy `assets/` to the project root unchanged:
 ```
 package.json  vite.config.ts  tsconfig*.json  index.html   src/main.tsx
 src/App.tsx                 ← THROWAWAY. delete its slides; author the real deck.
-src/Gallery.tsx             ← live component gallery (dev aid; previews every component)
-src/styles/   tokens.css (edit :root ONLY) · base.css · gallery.css   ← don't edit base/gallery
+src/styles/   tokens.css (edit :root ONLY) · base.css   ← don't edit base.css
 src/deck/   Deck Slide Build Reveal DeckContext useInView icons Annotator   ← engine + UI. LOCKED.
 src/components/  CountUp TiltCard Marquee Bento Split StatGrid VisualDashboard Accordion
                 Comparison Tabs Timeline CodeWindow BrowserFrame SpotlightCard Charts
 ```
 
-`npm install && npm run dev` runs it: `/` opens the **component gallery**, `#deck` is
-the **deck demo**. Verify the gallery + the dock/rail/builds work, then author the real
-deck in `App.tsx` (view it at `#deck`).
+`npm install && npm run dev` runs the deck at `/`. Verify the dock / thumbnail rail /
+click-builds work, then delete the starter slides and author the real deck in
+`App.tsx`.
 
 ---
 
 ## Step 2 — Theme it (edit only the `:root` block)
 
 All color, type, radius, depth, motion live in `src/styles/tokens.css` `:root`.
-**Change values, never variable names.** Same contract / 9-style gallery as the
-other skills (dark product, editorial luxury, Swiss, dark technical, warm minimal,
+**Change values, never variable names.** Nine ready-made theme families to pull from
+(dark product, editorial luxury, Swiss, dark technical, warm minimal,
 fintech, aurora glass, cinematic, paper editorial). One accent, used sparingly.
 Dark vs light: set `html { color-scheme }` in base.css and pick `--bg`/`--fg`
 accordingly. Set fonts in `--font-head`/`--font-body` and the `@import` at the top
@@ -182,11 +179,11 @@ The kit is a **floor, not a ceiling.** The bundled components cover a lot (compa
 tabs, timeline, charts, code/browser frames, accordion, bento, split…) — but author
 new ones for the topic when nothing fits: a `<Pricing>` table, a Gantt, a device/phone
 mock, a chat or kanban mock, a map. Only the token *names* and `src/deck/` (engine +
-chrome) are off-limits to rewrite; **adding** components/visuals is encouraged — and
-drop a `<Swatch>`/`<Frame>` into `src/Gallery.tsx` to preview each. Every new piece
-must: use `var(--…)` tokens only (no raw hex), compose like a web section, be responsive
-(work on mobile), animate with `Reveal`/`Build`/`useInView` + honor reduced-motion, use
-tabular figures, and add **no new dependencies** (plain React + CSS + SVG).
+chrome) are off-limits to rewrite; **adding** components/visuals is encouraged. Every
+new piece must: use `var(--…)` tokens only (no raw hex), compose like a web section, be
+responsive (work on mobile), animate with `Reveal`/`Build`/`useInView` + honor
+reduced-motion, use tabular figures, and add **no new dependencies** (plain React +
+CSS + SVG).
 
 ---
 
