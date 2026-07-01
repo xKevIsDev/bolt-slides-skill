@@ -7,7 +7,6 @@ import Split from './components/Split'
 import CountUp from './components/CountUp'
 import TiltCard from './components/TiltCard'
 import Marquee from './components/Marquee'
-import VisualDashboard from './components/VisualDashboard'
 import StatGrid from './components/StatGrid'
 import Accordion from './components/Accordion'
 import Comparison from './components/Comparison'
@@ -19,75 +18,189 @@ import SpotlightCard from './components/SpotlightCard'
 import { BarChart, LineChart, DonutChart } from './components/Charts'
 
 /* ══════════════════════════════════════════════════════════════════════
-   ⚠️  THROWAWAY DEMO showing every component. DELETE these slides and AUTHOR
-   THE USER'S DECK. Each child of <Deck> is one slide. Add speaker notes with
-   notes="…" on any slide (shown in presenter mode — press P). (A = auto-play.)
+   LINEAR — All-hands deck.
+   The product development system for teams and agents.
+   Theme: Linear's near-black canvas + signature indigo→violet accent.
+   Fonts: Inter (head + body), JetBrains Mono (code) — Linear's own stack.
    ══════════════════════════════════════════════════════════════════════ */
-const panel = (extra = 0.22): React.CSSProperties => ({ position: 'absolute', inset: 0, background: `radial-gradient(120% 100% at 30% 20%, color-mix(in srgb, var(--primary) ${extra * 100}%, transparent), transparent 60%), var(--surface-2)` })
-const card: React.CSSProperties = { padding: 22, borderRadius: 'var(--radius)', background: 'var(--surface)', border: '1px solid var(--hair)' }
+
+const card: React.CSSProperties = {
+  padding: 22, borderRadius: 'var(--radius)', background: 'var(--surface)',
+  border: '1px solid var(--hair)',
+}
+
+const panel = (extra = 0.18): React.CSSProperties => ({
+  position: 'absolute', inset: 0,
+  background: `radial-gradient(120% 100% at 30% 20%, color-mix(in srgb, var(--primary) ${extra * 100}%, transparent), transparent 60%), var(--surface-2)`,
+})
+
+/* A Linear-style issue row mock — used inside the product slide */
+function IssueRow({ id, label, status, statusColor, active }: {
+  id: string; label: string; status: string; statusColor: string; active?: boolean
+}) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 12, padding: '11px 14px',
+      borderRadius: 10, background: active ? 'var(--surface-2)' : 'transparent',
+      border: active ? '1px solid color-mix(in srgb, var(--primary) 40%, transparent)' : '1px solid transparent',
+    }}>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--fg-faint)', width: 64 }}>{id}</span>
+      <span style={{ flex: 1, fontSize: 14, color: 'var(--fg)', fontWeight: active ? 500 : 400 }}>{label}</span>
+      <span style={{
+        fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999,
+        color: statusColor, background: `color-mix(in srgb, ${statusColor} 14%, transparent)`,
+        border: `1px solid color-mix(in srgb, ${statusColor} 30%, transparent)`,
+      }}>{status}</span>
+    </div>
+  )
+}
 
 export default function App() {
   return (
     <Deck>
-      {/* Cover */}
-      <Slide center nav="Cover" notes="Welcome — introduce yourself, then set up the problem. Hold a beat on this slide.">
+      {/* ── Cover ─────────────────────────────────────────────────────── */}
+      <Slide center nav="Cover" notes="Welcome everyone. This is our all-hands — a look at where Linear is, what we've shipped, and where we're going. Hold on this slide for a beat.">
         <Reveal>
-          <div className="kicker" style={{ marginBottom: 14 }}>Helix · Component demo</div>
-          <h1 className="display"><span className="accent-text">Helix</span></h1>
-          <p className="subhead" style={{ marginTop: 18 }}>A responsive React deck engine. Delete this and build the real one.</p>
+          <div className="kicker" style={{ marginBottom: 18 }}>Linear · All-hands · Q3 2026</div>
+          <h1 className="display"><span className="accent-text">Linear</span></h1>
+          <p className="subhead" style={{ marginTop: 20, marginInline: 'auto' }}>
+            The product development system for teams and agents.
+          </p>
         </Reveal>
       </Slide>
 
-      {/* Statement + click-build */}
-      <Slide center nav="Thesis" notes="Pause before revealing the second line. The whole pitch hangs on this contrast.">
+      {/* ── Thesis / the shift ────────────────────────────────────────── */}
+      <Slide center nav="The shift" notes="The core thesis. Pause before each line. The whole pitch hangs on this contrast — software is changing shape, and our tools need to change with it.">
         <h2 className="headline" style={{ fontSize: 'clamp(34px,5.5vw,68px)', marginInline: 'auto' }}>
-          Dashboards are everywhere. <span className="accent-text">Insight isn't.</span>
+          Software is being rebuilt <span className="accent-text">by teams and agents.</span>
         </h2>
         <Build at={1}>
-          <p className="subhead" style={{ marginTop: 20 }}>Helix turns raw events into answers — automatically.</p>
+          <p className="subhead" style={{ marginTop: 22, marginInline: 'auto' }}>
+            The tools haven't caught up. Spreadsheets, ticket queues, and status meetings still run the show.
+          </p>
+        </Build>
+        <Build at={2}>
+          <p className="subhead" style={{ marginTop: 16, marginInline: 'auto' }}>
+            Linear is built for this era — purpose-built for planning and building products, with AI workflows at its core.
+          </p>
         </Build>
       </Slide>
 
-      {/* Split feature */}
-      <Split
-        nav="Realtime"
-        notes="Emphasize sub-second latency. Point at the live chart while you talk."
-        kicker="Realtime"
-        title={<>Everything, <span className="accent-text">as it happens.</span></>}
-        body="Live metrics with sub-second latency — no pipelines to babysit."
-        media={<><div style={panel(0.22)} /><div style={{ position: 'relative', padding: 40 }}><TiltCard><VisualDashboard /></TiltCard></div></>}
-      />
-
-      {/* Bento */}
+      {/* ── What we shipped — Bento ───────────────────────────────────── */}
       <Bento
-        nav="Platform"
-        notes="Don't read every tile — let them scan. Land on throughput and uptime."
-        kicker="One platform"
-        title="Everything in one place."
+        nav="What we shipped"
+        notes="Don't read every tile — let them scan. Land on the agent count and the realtime sync. These are the headlines."
+        kicker="This quarter"
+        title="What we shipped."
         tiles={[
-          { k: 'Throughput', fig: <CountUp to={9.4} decimals={1} suffix="M" />, body: 'events / min at peak.', c: 5, r: 2, variant: 'glow' },
-          { k: 'Uptime', fig: <CountUp to={99.99} decimals={2} suffix="%" />, c: 4 },
-          { k: 'Regions', fig: <CountUp to={28} />, c: 3, variant: 'accent' },
-          { k: 'Connectors', title: '120+ native', body: 'Snowflake, Kafka, dbt…', c: 4 },
-          { k: 'Compliance', title: 'SOC 2 · HIPAA', c: 3 },
+          { k: 'Agent workflows', fig: <CountUp to={4} />, body: 'native agents shipped — Codex, Cursor, Copilot, and our own.', c: 5, r: 2, variant: 'glow' },
+          { k: 'Realtime sync', fig: <CountUp to={50} suffix="ms" />, body: 'p95 sync latency — down from 340ms.', c: 4 },
+          { k: 'Integrations', fig: <CountUp to={120} suffix="+" />, c: 3, variant: 'accent' },
+          { k: 'Structural diffs', title: 'Review agent output', body: 'Understand code changes from humans and agents at a glance.', c: 4 },
+          { k: 'Self-driving ops', title: 'Auto-routing', body: 'Conversations → issues, labeled and prioritized automatically.', c: 3 },
         ]}
       />
 
-      {/* StatGrid — traction */}
+      {/* ── Product: the system — Split with product UI ───────────────── */}
+      <Split
+        nav="The system"
+        notes="This is the product. Walk left to right — intake, planning, building, review. Everything in one place, no context switching."
+        kicker="One system"
+        title={<>From idea to <span className="accent-text">ship.</span></>}
+        body="Plan, build, and review in a single workspace. Intake turns feedback into routed issues. Roadmaps keep everyone aligned. Agents work alongside your team — not in a separate tab."
+        media={
+          <>
+            <div style={panel(0.16)} />
+            <div style={{ position: 'relative', padding: '40px 36px', width: '100%' }}>
+              <TiltCard>
+                <BrowserFrame url="linear.app">
+                  <div style={{ display: 'grid', gridTemplateColumns: '172px 1fr', minHeight: 360 }}>
+                    <div style={{ borderRight: '1px solid var(--hair-2)', background: 'var(--surface)', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, padding: '0 6px' }}>
+                        <span style={{ width: 18, height: 18, borderRadius: 5, background: 'var(--accent)' }} />
+                        <span style={{ fontSize: 14, fontWeight: 600 }}>Linear</span>
+                      </div>
+                      {['Inbox', 'My issues', 'Projects', 'Views', 'Roadmaps'].map((n, i) => (
+                        <div key={n} style={{ padding: '7px 10px', borderRadius: 7, fontSize: 13, fontWeight: i === 2 ? 600 : 400, color: i === 2 ? 'var(--fg)' : 'var(--fg-muted)', background: i === 2 ? 'var(--surface-2)' : 'transparent' }}>{n}</div>
+                      ))}
+                    </div>
+                    <div style={{ padding: '18px 20px' }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
+                        <h3 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Mobile app launch</h3>
+                        <span className="foot">12 issues · 3 in progress</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <IssueRow id="MOB-241" label="Render UI before vehicle_state sync" status="In progress" statusColor="#5e6ad2" active />
+                        <IssueRow id="MOB-238" label="Dashboard syncStatus prop" status="In review" statusColor="#8568dc" />
+                        <IssueRow id="MOB-235" label="Android localization pass" status="Done" statusColor="#3ecf8e" />
+                        <IssueRow id="MOB-231" label="Crash on cold start — Samsung" status="Backlog" statusColor="#9aa0a6" />
+                      </div>
+                    </div>
+                  </div>
+                </BrowserFrame>
+              </TiltCard>
+            </div>
+          </>
+        }
+      />
+
+      {/* ── Agent workflows — Split flipped with agents image ─────────── */}
+      <Split
+        nav="Agents"
+        notes="This is the differentiator. Agents don't just sit in a sidebar — they pick up issues, open PRs, and you review the output in the same place you review human work."
+        kicker="Human + agent"
+        title={<>Agents that <span className="accent-text">do the work.</span></>}
+        body="Delegate entire issues end-to-end or work on complex tasks together. Agents draft PRDs, write code, and push PRs. You review structural diffs — human or agent — in one place."
+        flip
+        media={
+          <>
+            <div style={panel(0.14)} />
+            <img src="/agents.webp" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.92 }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, var(--bg) 0%, transparent 40%, transparent 100%)' }} />
+          </>
+        }
+      />
+
+      {/* ── Traction — StatGrid ───────────────────────────────────────── */}
       <StatGrid
         nav="Traction"
-        notes="These are the headline numbers investors remember. Say ARR is up 3× out loud."
+        notes="These are the numbers. 33,000 teams is the headline — say it out loud. Net retention at 118% means the product sells itself."
         kicker="Traction"
-        title="Numbers that compound."
+        title="The numbers compound."
         stats={[
-          { value: <CountUp to={4.2} decimals={1} prefix="$" suffix="M" />, label: 'ARR', caption: 'up 3× year over year' },
-          { value: <CountUp to={92} suffix="%" />, label: 'Net retention', caption: 'best in class' },
-          { value: <CountUp to={120} suffix="+" />, label: 'Enterprise logos', caption: 'across six industries' },
+          { value: <CountUp to={33000} suffix="+" />, label: 'Product teams', caption: 'from ambitious startups to major enterprises' },
+          { value: <CountUp to={118} suffix="%" />, label: 'Net retention', caption: 'best-in-class for the category' },
+          { value: <CountUp to={4.2} decimals={1} prefix="$" suffix="B" />, label: 'Valuation', caption: 'Series C, June 2025' },
         ]}
       />
 
-      {/* Comparison */}
-      <Slide nav="Comparison" notes="Lead with realtime. If they push on price, point at the highlighted column.">
+      {/* ── Growth charts ──────────────────────────────────────────────── */}
+      <Slide nav="Growth" notes="Weekly active is the one to watch — it's accelerating, not flattening. Revenue follows engagement.">
+        <Reveal>
+          <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>The trajectory</div>
+          <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(22px,4vh,38px)' }}>Growth you can see.</h2>
+        </Reveal>
+        <Reveal>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.1fr 0.8fr', gap: 20, alignItems: 'stretch' }}>
+            <div style={card}>
+              <div className="kicker" style={{ marginBottom: 14 }}>Weekly active teams</div>
+              <div style={{ height: 150 }}>
+                <BarChart data={[{ label: 'Q1', value: 30 }, { label: 'Q2', value: 44 }, { label: 'Q3', value: 39 }, { label: 'Q4', value: 61 }, { label: 'Q5', value: 78 }, { label: 'Q6', value: 96 }]} height={150} />
+              </div>
+            </div>
+            <div style={card}>
+              <div className="kicker" style={{ marginBottom: 14 }}>ARR</div>
+              <LineChart points={[12, 16, 14, 22, 26, 34, 30, 44]} height={150} />
+            </div>
+            <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <DonutChart value={118} label="Net retention" size={150} />
+            </div>
+          </div>
+        </Reveal>
+      </Slide>
+
+      {/* ── Comparison: Linear vs legacy ───────────────────────────────── */}
+      <Slide nav="Why teams switch" notes="Lead with realtime. If they push on price, point at the highlighted column. The honest comparison — we don't hide from it.">
         <Reveal>
           <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>Why teams switch</div>
           <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(22px,4vh,38px)' }}>The honest comparison.</h2>
@@ -95,117 +208,62 @@ export default function App() {
         <Reveal>
           <div style={{ maxWidth: 820, marginInline: 'auto' }}>
             <Comparison
-              cols={['', 'Helix', 'Legacy tools']}
+              cols={['', 'Linear', 'Legacy tools']}
               highlight={0}
               rows={[
-                { label: 'Realtime by default', values: [true, false] },
-                { label: 'Self-host option', values: [true, false] },
-                { label: 'Time to first insight', values: ['5 min', '2 weeks'] },
-                { label: 'Starting price', values: ['$29', '$99'] },
+                { label: 'Built for AI agents', values: [true, false] },
+                { label: 'Realtime sync (sub-100ms)', values: [true, false] },
+                { label: 'Structural code diffs', values: [true, false] },
+                { label: 'Time to first issue', values: ['2 min', '2 days'] },
+                { label: 'Native roadmap + PRD', values: [true, false] },
               ]}
             />
           </div>
         </Reveal>
       </Slide>
 
-      {/* Tabs */}
-      <Slide nav="Use cases" notes="Click through the tabs as you speak to each team. Stop on the one that fits the room.">
+      {/* ── Use cases — Tabs ───────────────────────────────────────────── */}
+      <Slide nav="Who uses it" notes="Click through the tabs as you speak to each team. Stop on the one that fits the room.">
         <Reveal>
-          <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>One platform</div>
+          <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>One platform, every team</div>
           <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(20px,3vh,30px)' }}>Built for every team.</h2>
         </Reveal>
         <Reveal style={{ textAlign: 'center', maxWidth: 780, marginInline: 'auto' }}>
           <Tabs tabs={[
-            { label: 'Engineering', content: <p className="lead" style={{ margin: 0 }}>Trace any request end-to-end, alert on anomalies, ship with confidence.</p> },
-            { label: 'Data', content: <div style={{ height: 180 }}><BarChart data={[{ label: 'Mon', value: 38 }, { label: 'Tue', value: 55 }, { label: 'Wed', value: 47 }, { label: 'Thu', value: 72 }, { label: 'Fri', value: 90 }]} height={180} /></div> },
-            { label: 'Ops', content: <p className="lead" style={{ margin: 0 }}>One source of truth for uptime, cost, and capacity — no spreadsheets.</p> },
+            { label: 'Engineering', content: <p className="lead" style={{ margin: 0 }}>Track issues, review PRs, and ship — with agents that open branches and push code.</p> },
+            { label: 'Product', content: <p className="lead" style={{ margin: 0 }}>Roadmaps, PRDs, and initiatives that stay in sync with what's actually being built.</p> },
+            { label: 'Design', content: <p className="lead" style={{ margin: 0 }}>Specs and feedback in one place — no more Figma comments lost in Slack.</p> },
           ]} />
         </Reveal>
       </Slide>
 
-      {/* Split + code */}
+      {/* ── Developer-first — Split with code ─────────────────────────── */}
       <Split
         nav="Developer-first"
-        notes="Three lines, no schema. If there's an engineer in the room, this is the slide for them."
+        notes="Three lines, no schema. If there's an engineer in the room, this is the slide for them. The API is the product."
         kicker="Developer-first"
         title={<>Drop-in <span className="accent-text">simple.</span></>}
-        body="Add it to your app in three lines. No SDK to learn, no schema to define."
-        media={<><div style={panel(0.16)} /><div style={{ position: 'relative', padding: 36, width: '100%' }}>
-          <CodeWindow title="app.ts" highlight={[3]} code={`import { track } from '@helix/sdk'
+        body="A typed API, webhooks for everything, and a CLI that feels native. No SDK to learn, no schema to define — just issues and updates."
+        media={
+          <>
+            <div style={panel(0.14)} />
+            <div style={{ position: 'relative', padding: 36, width: '100%' }}>
+              <CodeWindow title="create-issue.ts" highlight={[5, 6, 7]} code={`import { Linear } from '@linear/sdk'
 
-track('signup', {
-  plan: 'pro',
-  source: 'landing',
+const linear = new Linear(process.env.LINEAR_KEY)
+
+const issue = await linear.createIssue({
+  title: 'Ship mobile launch',
+  teamId: 'MOB',
+  assigneeId: 'me',
 })`} />
-        </div></>}
+            </div>
+          </>
+        }
       />
 
-      {/* Browser frame */}
-      <Slide center nav="Product" notes="Demo the real thing if you can. Otherwise walk the screen top to bottom.">
-        <Reveal>
-          <div className="kicker" style={{ marginBottom: 14 }}>See it live</div>
-          <h2 className="headline" style={{ fontSize: 'clamp(30px,4.4vw,52px)', marginInline: 'auto', marginBottom: 'clamp(18px,3vh,28px)' }}>Your data, one screen.</h2>
-        </Reveal>
-        <Reveal>
-          <div style={{ maxWidth: 800, marginInline: 'auto', width: '100%' }}>
-            <BrowserFrame url="app.helix.io">
-              <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', minHeight: 372 }}>
-                <div style={{ borderRight: '1px solid var(--hair-2)', background: 'var(--surface)', padding: '18px 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <div className="kicker" style={{ marginBottom: 12, paddingLeft: 8 }}>Helix</div>
-                  {['Overview', 'Events', 'Funnels', 'Cohorts', 'Settings'].map((n, i) => (
-                    <div key={n} style={{ padding: '8px 12px', borderRadius: 9, fontSize: 14, fontWeight: i === 0 ? 600 : 400, color: i === 0 ? 'var(--accent-ink)' : 'var(--fg-muted)', background: i === 0 ? 'var(--accent)' : 'transparent' }}>{n}</div>
-                  ))}
-                </div>
-                <div style={{ padding: '20px 24px', textAlign: 'left' }}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16 }}>
-                    <h3 style={{ fontSize: 19, fontWeight: 600, margin: 0 }}>Overview</h3>
-                    <span className="foot">Last 30 days</span>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 16 }}>
-                    {[['Revenue', '$1.24M', '▲ 18.2%'], ['Active users', '48,210', '▲ 9.4%'], ['Churn', '1.9%', '▼ 0.6%']].map(([l, v, d]) => (
-                      <div key={l} style={{ ...card, padding: 14 }}><div className="foot" style={{ marginBottom: 5 }}>{l}</div><div style={{ fontSize: 23, fontWeight: 600, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{v}</div><div style={{ fontSize: 12, fontWeight: 600, color: 'var(--primary)', marginTop: 4 }}>{d}</div></div>
-                    ))}
-                  </div>
-                  <div style={{ ...card, padding: 16 }}><LineChart points={[12, 16, 14, 22, 26, 34, 30, 44]} height={120} /></div>
-                </div>
-              </div>
-            </BrowserFrame>
-          </div>
-        </Reveal>
-      </Slide>
-
-      {/* Charts */}
-      <Slide nav="Metrics" notes="Net retention at 94% is the one to call out — it means the product sells itself.">
-        <Reveal>
-          <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>The numbers</div>
-          <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(22px,4vh,38px)' }}>Growth you can see.</h2>
-        </Reveal>
-        <Reveal>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.1fr 0.8fr', gap: 20, alignItems: 'stretch' }}>
-            <div style={card}><div className="kicker" style={{ marginBottom: 14 }}>Weekly active</div><div style={{ height: 150 }}><BarChart data={[{ label: 'W1', value: 30 }, { label: 'W2', value: 44 }, { label: 'W3', value: 39 }, { label: 'W4', value: 61 }, { label: 'W5', value: 78 }, { label: 'W6', value: 96 }]} height={150} /></div></div>
-            <div style={card}><div className="kicker" style={{ marginBottom: 14 }}>Revenue</div><LineChart points={[12, 16, 14, 22, 26, 34, 30, 44]} height={150} /></div>
-            <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><DonutChart value={94} label="Net retention" size={150} /></div>
-          </div>
-        </Reveal>
-      </Slide>
-
-      {/* Timeline */}
-      <Slide nav="Roadmap" notes="Anchor on 'Now'. The AI insights line is what gets people excited — dwell there.">
-        <Reveal>
-          <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>Where we're going</div>
-          <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(20px,3vh,32px)' }}>The roadmap.</h2>
-        </Reveal>
-        <div style={{ maxWidth: 560, marginInline: 'auto' }}>
-          <Timeline items={[
-            { time: 'Shipped', title: 'Realtime core', body: 'Sub-second metrics across 28 regions.' },
-            { time: 'Now', title: 'AI insights', body: 'Plain-English answers from your data.' },
-            { time: 'Next', title: 'Enterprise', body: 'SSO, audit logs, and on-prem.' },
-          ]} />
-        </div>
-      </Slide>
-
-      {/* Spotlight principles */}
-      <Slide nav="Principles" notes="Hover the cards for the glow if presenting on a screen. Keep this one short.">
+      {/* ── Principles — Spotlight cards ──────────────────────────────── */}
+      <Slide nav="Principles" notes="Hover the cards for the glow if presenting on a screen. Keep this one short — these are our beliefs, not features.">
         <Reveal>
           <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>What we believe</div>
           <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(22px,4vh,38px)' }}>Three principles.</h2>
@@ -213,9 +271,9 @@ track('signup', {
         <Reveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
             {[
-              { k: '01', t: 'Fast by default', d: 'Speed is a feature. Everything is realtime.' },
-              { k: '02', t: 'Yours to own', d: 'Your data, your infra, no lock-in.' },
-              { k: '03', t: 'Honest pricing', d: 'No per-seat tax. Scale without surprises.' },
+              { k: '01', t: 'Craft is the product', d: "Speed and design aren't features — they're the thing. Every interaction matters." },
+              { k: '02', t: 'Built for the AI era', d: 'Agents are first-class users, not a bolt-on. Workflows are shared by humans and agents.' },
+              { k: '03', t: 'Momentum over noise', d: 'We reduce friction and restore focus. Teams ship with velocity, not meetings.' },
             ].map((p) => (
               <SpotlightCard key={p.k}>
                 <div className="kicker accent-text" style={{ marginBottom: 12 }}>{p.k}</div>
@@ -227,7 +285,39 @@ track('signup', {
         </Reveal>
       </Slide>
 
-      {/* Accordion — FAQ */}
+      {/* ── Roadmap — Timeline ────────────────────────────────────────── */}
+      <Slide nav="Roadmap" notes="Anchor on 'Now'. The agent delegation line is what gets people excited — dwell there. Enterprise is table stakes, don't oversell it.">
+        <Reveal>
+          <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>Where we're going</div>
+          <h2 className="headline" style={{ textAlign: 'center', marginInline: 'auto', marginBottom: 'clamp(20px,3vh,32px)' }}>The roadmap.</h2>
+        </Reveal>
+        <div style={{ maxWidth: 560, marginInline: 'auto' }}>
+          <Timeline items={[
+            { time: 'Shipped', title: 'Agent workflows', body: 'Codex, Cursor, and Copilot — native, in the issue.' },
+            { time: 'Now', title: 'Agent delegation', body: 'Hand off entire issues end-to-end. Review the PR in Linear.' },
+            { time: 'Next', title: 'Self-driving ops', body: 'Intake → routing → prioritization, fully automated.' },
+            { time: 'Later', title: 'Enterprise scale', body: 'SSO, audit logs, and on-prem for the largest teams.' },
+          ]} />
+        </div>
+      </Slide>
+
+      {/* ── Customers — Marquee ────────────────────────────────────────── */}
+      <Slide center nav="Customers" notes="Name-drop the two logos most relevant to this audience. 33,000 teams — from one-person startups to public companies.">
+        <Reveal><div className="kicker" style={{ marginBottom: 28 }}>Trusted by 33,000+ product teams</div></Reveal>
+        <Marquee items={['Vercel', 'Ramp', 'Cash App', 'Retool', 'Mercury', 'Arc', 'Replicate', 'Cursor']} />
+      </Slide>
+
+      {/* ── Quote ──────────────────────────────────────────────────────── */}
+      <Slide center nav="Quote" notes="Read it slowly, then stay silent for a second. Let it land. This is from a real customer — the craft line is the one people remember.">
+        <Reveal>
+          <p className="headline" style={{ fontSize: 'clamp(28px,4vw,50px)', fontWeight: 500, marginInline: 'auto', maxWidth: '22ch' }}>
+            "You'll probably build a better product, just because of the craft that using Linear infuses on your brain."
+          </p>
+          <div className="foot" style={{ marginTop: 22 }}>— from a Linear customer</div>
+        </Reveal>
+      </Slide>
+
+      {/* ── FAQ — Accordion ───────────────────────────────────────────── */}
       <Slide nav="FAQ" notes="Only open the questions they actually ask. Skip the rest to keep momentum.">
         <Reveal>
           <div className="kicker" style={{ marginBottom: 12, textAlign: 'center' }}>Common questions</div>
@@ -236,35 +326,22 @@ track('signup', {
         <Reveal>
           <div style={{ maxWidth: 720, marginInline: 'auto' }}>
             <Accordion items={[
-              { title: 'How long does setup take?', body: 'Five minutes — point Helix at your warehouse and you are live.' },
-              { title: 'Can we self-host?', body: 'Yes. A Docker image and Terraform module ship with every plan.' },
-              { title: 'How is it priced?', body: 'Flat monthly, no per-seat tax — you scale without surprises.' },
+              { title: 'How do agents actually work in Linear?', body: 'Agents pick up issues assigned to them, work in a branch, and open a PR. You review the structural diff — same as a human PR — and merge or request changes.' },
+              { title: 'Is my data used to train models?', body: 'No. Your data is never used to train any model. Agents run in your context, with your permissions, and nothing leaves your workspace.' },
+              { title: 'Can we self-host?', body: 'Enterprise plans include on-prem deployment. SSO, audit logs, and data residency are all available today.' },
+              { title: 'How is it priced?', body: 'Per active user, with agents included. No per-agent tax — you scale humans and agents together without surprises.' },
             ]} />
           </div>
         </Reveal>
       </Slide>
 
-      {/* Logos */}
-      <Slide center nav="Customers" notes="Name-drop the two logos most relevant to this audience.">
-        <Reveal><div className="kicker" style={{ marginBottom: 28 }}>Trusted by teams everywhere</div></Reveal>
-        <Marquee items={['Northwind', 'Globex', 'Initech', 'Umbra', 'Hooli', 'Vehement', 'Soylent']} />
-      </Slide>
-
-      {/* Quote */}
-      <Slide center nav="Quote" notes="Read it slowly, then stay silent for a second. Let it land.">
+      {/* ── Close / CTA ───────────────────────────────────────────────── */}
+      <Slide center nav="Close" notes="Make the ask explicitly. Leave the URL on screen while you take questions.">
         <Reveal>
-          <p className="headline" style={{ fontSize: 'clamp(28px,4vw,50px)', fontWeight: 500, marginInline: 'auto', maxWidth: '20ch' }}>
-            “We replaced four tools with Helix and never looked back.”
+          <h2 className="display" style={{ fontSize: 'clamp(40px,7vw,96px)' }}><span className="accent-text">Let's build.</span></h2>
+          <p className="subhead" style={{ marginTop: 18, marginInline: 'auto' }}>
+            linear.app · the product development system for teams and agents.
           </p>
-          <div className="foot" style={{ marginTop: 22 }}>— Dana Kim, VP Engineering</div>
-        </Reveal>
-      </Slide>
-
-      {/* CTA */}
-      <Slide center nav="Close" notes="Make the ask explicitly. Leave the contact details on screen while you take questions.">
-        <Reveal>
-          <h2 className="display" style={{ fontSize: 'clamp(40px,7vw,96px)' }}><span className="accent-text">Let's talk.</span></h2>
-          <p className="subhead" style={{ marginTop: 16 }}>helix.io · hello@helix.io</p>
         </Reveal>
       </Slide>
     </Deck>

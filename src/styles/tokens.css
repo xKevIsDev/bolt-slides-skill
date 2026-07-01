@@ -5,35 +5,35 @@
    "dark product" default — REPLACE them to match the brief or the brand.
    =================================================================== */
 :root {
-  /* Surfaces */
-  --bg:        #05070a;
-  --bg-grad-1: rgba(79, 229, 176, 0.12);
-  --bg-grad-2: rgba(41, 192, 240, 0.08);
-  --surface:   rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.07);
+  /* Surfaces — Linear's near-black canvas */
+  --bg:        #08090a;
+  --bg-grad-1: rgba(94, 106, 210, 0.16);
+  --bg-grad-2: rgba(133, 104, 220, 0.10);
+  --surface:   rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.065);
 
-  /* Ink */
-  --fg:       #f4f7fa;
-  --fg-muted: #9aa4b2;
-  --fg-faint: #626d7d;
+  /* Ink — Linear's off-white text */
+  --fg:       #f7f8f8;
+  --fg-muted: #9aa0a6;
+  --fg-faint: #62696f;
 
   /* Hairlines */
-  --hair:   rgba(255, 255, 255, 0.10);
-  --hair-2: rgba(255, 255, 255, 0.06);
+  --hair:   rgba(255, 255, 255, 0.09);
+  --hair-2: rgba(255, 255, 255, 0.055);
 
-  /* Accent — ONE accent. May be a 2–4 stop gradient within ~80° of hue. */
-  --primary:    #4fe5b0;
-  --accent:     linear-gradient(115deg, #c8f56e 0%, #5aeeb0 42%, #34dcd8 74%, #29c0f0 100%);
-  --accent-ink: #04140e;
+  /* Accent — Linear's signature indigo→violet */
+  --primary:    #5e6ad2;
+  --accent:     linear-gradient(115deg, #7c89f4 0%, #5e6ad2 45%, #8568dc 100%);
+  --accent-ink: #ffffff;
 
   /* Radius */
-  --radius:    22px;
-  --radius-sm: 12px;
-  --radius-lg: 26px;
+  --radius:    18px;
+  --radius-sm: 10px;
+  --radius-lg: 24px;
 
   /* Depth */
   --shadow: 0 50px 120px -50px rgba(0,0,0,0.9);
-  --glow:   0 30px 80px -40px rgba(79, 229, 176, 0.5);
+  --glow:   0 30px 80px -40px rgba(94, 106, 210, 0.45);
 
   /* Type */
   --font-head: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
@@ -46,8 +46,8 @@
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Atmosphere */
-  --grain:    0.035;
-  --vignette: rgba(0, 0, 0, 0.22);
+  --grain:    0.03;
+  --vignette: rgba(0, 0, 0, 0.24);
 
   /* Responsive gutter — fluid side / vertical padding */
   --gutter:   clamp(28px, 6vw, 120px);
